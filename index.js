@@ -131,8 +131,8 @@ const notification_options = {
     timeToLive: 60 * 60 * 24
   };
 app.post('/firebase/notification', (req, res)=>{
-    const  registrationToken = req.body.registrationToken
-    const message = req.body.message
+    const  registrationToken = "e1421997-0507-461b-ba95-88ba496a8154"
+    const message = "hello"
     const options =  notification_options
     
       admin.messaging().sendToDevice(registrationToken, message, options)
