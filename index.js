@@ -40,7 +40,7 @@ app.get("/notify", async (req, res) => {
     },
   };
 admin.messaging()
-    .send(message)
+    .sendToDevice("fb3yI1CBR1umrt0TqJcUuV:APA91bHc5ZLAR3kmzC8kAD2PJrDD5bZvmfZYrxxT1WD_ZqnQnTFASLAIDAYyxxZSXJu1IGzJXb2NzUSeqoD7OOjIL7-1brSTtFoPRcivknjSCYd_o0bMAWHNN5pzJQbTTd9PmYA2nJ7C", message)
     .then((response) => {
       res.send(`Successfully sent message: ${response}`);
     })
