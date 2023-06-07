@@ -23,14 +23,7 @@ app.get("/notify", async (req, res) => {
         "score": "5x1",
         "time": "10:15"
     },
-    android: {
-      notification: {
-        image:
-          "https://raw.githubusercontent.com/AboutReact/sampleresource/master/old_logo.png",
-      },
-      ttl: 36000 * 10000,
-      priority: "high",
-    },
+   
     
   };
 //   const alldata =   admin.firestore().getAll
