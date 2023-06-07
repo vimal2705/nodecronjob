@@ -21,7 +21,7 @@ app.get("/notify", async (req, res) => {
     },
     data: {
         "score": "5x1",
-        "time": "10:15"
+        "time": "10:5"
     },
    
     
