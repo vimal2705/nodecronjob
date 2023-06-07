@@ -14,14 +14,10 @@ app.get("/", (req, res) => {
 
 app.get("/notify", async (req, res) => {
   const message = {
-
-    notification: {
+    "token" : "fb3yI1CBR1umrt0TqJcUuV:APA91bHc5ZLAR3kmzC8kAD2PJrDD5bZvmfZYrxxT1WD_ZqnQnTFASLAIDAYyxxZSXJu1IGzJXb2NzUSeqoD7OOjIL7-1brSTtFoPRcivknjSCYd_o0bMAWHNN5pzJQbTTd9PmYA2nJ7C",
+    "notification": {
       title: "Test Notification",
       body: "Here is the Notification Description",
-    },
-    data: {
-        "score": "5x1",
-        "time": "10:5"
     },
    
     
@@ -29,7 +25,7 @@ app.get("/notify", async (req, res) => {
 //   const alldata =   admin.firestore().getAll
 
 admin.messaging()
-    .sendToDevice("fb3yI1CBR1umrt0TqJcUuV:APA91bHc5ZLAR3kmzC8kAD2PJrDD5bZvmfZYrxxT1WD_ZqnQnTFASLAIDAYyxxZSXJu1IGzJXb2NzUSeqoD7OOjIL7-1brSTtFoPRcivknjSCYd_o0bMAWHNN5pzJQbTTd9PmYA2nJ7C", message)
+    .send( message)
     .then((response) => {
       res.send(`Successfully sent message: ${response}`);
     })
