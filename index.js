@@ -118,34 +118,118 @@
 // import express from 'express'
 // import bodyparser from 'body-parser'
 
-const admin = require("./firebase")
+
 const express = require('express')
+const admin = require("firebase-admin");
+const { getFirestore } = require('firebase-admin/firestore');
 const bodyparser = require("body-parser")
+const serviceAccount = require("./serviceAccountKey.json")
+const cors = require('cors');
 
+const cron = require('node-cron');
+const sound1 = "./notification.wav"
+const moment = require('moment');
+const { async } = require('@firebase/util');
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://invi-6791b-default-rtdb.firebaseio.com"
+  });
 const app = express()
+const fs = getFirestore()
+
 app.use(bodyparser.json())
-
+const currentdate = new Date().toDateString()
 const port = 3000
-const notification_options = {
-    priority: "high",
-    timeToLive: 60 * 60 * 24
-  };
-app.post('/firebase/notification', (req, res)=>{
-    const  registrationToken = "e1421997-0507-461b-ba95-88ba496a8154"
-    const message = "hello"
-    const options =  notification_options
+
+ 
+  const devicetoken =  async (ids,title,body) =>{
+    var arr = []
+    {
+    for (let i = 0; i < ids.length; i++) {
     
-      admin.messaging().sendToDevice(registrationToken, message, options)
-      .then( response => {
+         const cityRef =  fs.collection('user').doc(ids[i]);
+         const doc = await cityRef.get();
 
-       res.status(200).send("Notification sent successfully")
-       
-      })
-      .catch( error => {
-          console.log(error);
-      });
+         var message = {
+                    "token" : doc.data().device_token,
+                    "notification": {
+                      title: title,
+                      body: body,
+                      
+                    },
+                    "android": {
+                        "notification": {
+                            sound: "notification.wav",
+                           
+                        }
+                    },
+                   
+                }
+                admin.messaging().send(message)
+               
+                   .then((response) => {
+                    console.log(`Successfully sent message: ${response}`);
+                   })
+                   .catch((error) => {
+                       console.log(`Error sending message: ${error}`);
+                   });
+               
+     
+          
+         
+        }
 
+        
+    }
+   
+  }
+
+  const fundata = async ()=>{
+
+    // for (let i = 0; i < deviceIds.length; i++) {
+    //    
+        
+    // }
+   
+    const data = fs.collection("Notifications")
+    // const doc = await data.get();
+    const snapshot = await data.get();
+    snapshot.forEach(doc => {
+        var date = new Date(doc.data().date).toDateString()
+        console.log("sdsd", 
+        date == currentdate,doc.data()
+     ); 
+     if (  date == currentdate) {
+        
+      const alldataa = doc.data().ids
+    devicetoken(alldataa,doc.data().title,doc.data().body)
+
+     }
+    
+     
+     
+     
+      
+    });
+  }
+
+app.use('*', cors());
+app.use(bodyparser.json());
+cron.schedule('*/30 * * * *', () => {
+
+    fundata()
+    console.log('running a task every second', moment().format('DD MMM YYYY hh:mm:ss A'));
+}, {
+    scheduled: true,
+    timezone: "Asia/Kolkata"
+});
+
+
+app.get('/getdata' ,(res)=>{
+    fundata()
 })
+
 app.listen(port, () =>{
 console.log("listening to port"+port)
 })
