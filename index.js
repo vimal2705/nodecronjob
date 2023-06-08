@@ -148,11 +148,9 @@ const port = 3000
     {
     for (let i = 0; i < ids.length; i++) {
     
-         const cityRef =  fs.collection('user').doc(ids[i]);
-         const doc = await cityRef.get();
-
+   
          var message = {
-                    "token" : doc.data().device_token,
+                    "topic":ids[i],
                     "notification": {
                       title: title,
                       body: body,
@@ -164,10 +162,11 @@ const port = 3000
                            
                         }
                     },
+                  
                    
                 }
                 admin.messaging().send(message)
-               
+
                    .then((response) => {
                     console.log(`Successfully sent message: ${response}`);
                    })
@@ -184,6 +183,46 @@ const port = 3000
     }
    
   }
+
+  app.post('/sendnotification',  (req, res) => {
+    const book = req.body;
+
+    // Output the book to the console for debugging
+    console.log(book);
+    for (let i = 0; i < book.ids.length; i++) {
+    
+   
+        var message = {
+                   "topic": book.ids[i],
+                   "notification": {
+                     title:  book.title,
+                     body:  book.body,
+                     
+                   },
+                   "android": {
+                       "notification": {
+                           sound: "notification.wav",
+                          
+                       }
+                   },
+                 
+                  
+               }
+               admin.messaging().send(message)
+
+                  .then((response) => {
+                   console.log(`Successfully sent message: ${response}`);
+                  })
+                  .catch((error) => {
+                      console.log(`Error sending message: ${error}`);
+                  });
+              
+        
+       }
+
+
+    res.send('notification sends');
+});
 
   const fundata = async ()=>{
 
@@ -216,7 +255,7 @@ const port = 3000
 
 app.use('*', cors());
 app.use(bodyparser.json());
-cron.schedule('*/30 * * * *', () => {
+cron.schedule('*/30 * *  * *', () => {
 
     fundata()
     console.log('running a task every second', moment().format('DD MMM YYYY hh:mm:ss A'));
@@ -226,9 +265,9 @@ cron.schedule('*/30 * * * *', () => {
 });
 
 
-app.get('/getdata' ,(res)=>{
-    fundata()
-})
+// app.get('/getdata' ,(res)=>{
+//     fundata()
+// })
 
 app.listen(port, () =>{
 console.log("listening to port"+port)
