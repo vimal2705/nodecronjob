@@ -255,7 +255,7 @@ const port = 3000
 
 app.use('*', cors());
 app.use(bodyparser.json());
-cron.schedule('*/30 * *  * *', () => {
+cron.schedule('*/10 * * * *', () => {
 
     fundata()
     console.log('running a task every second', moment().format('DD MMM YYYY hh:mm:ss A'));
